@@ -10,12 +10,6 @@ def _set_data(hash, line)
   hash
 end
 
-result = {
-  products: {},
-  warehouses: {},
-  orders: {},
-}
-
 def _read(file)
   file.readline.strip.to_i
 end
@@ -24,38 +18,52 @@ def _read_a(file)
   file.readline.strip.split.map &:to_i
 end
 
-def main(result)
+def main
+  result = {}
+
   File.open(FILENAME) do |f|
     _set_data(result, f.readline)
-    result[:products].update(total: _read(f))
-    result[:products].update(weights: _read_a(f))
+    result[:products] = {}
 
-    result[:warehouses].update(total: _read(f))
-    result[:warehouses][:nodes] = []
+    result[:products].update(total: _read(f), items: [])
+    product_weights = _read_a(f)
 
-    result[:warehouses][:total].times do |num|
-      location = _read_a(f)
-      products = _read_a(f)
-
-      result[:warehouses][:nodes] << { num => { location: location, products: products } }
+    result[:products][:total].times do |type|
+      result[:products][:items] << Product.new(type, product_weights[type])
     end
 
-    result[:orders].update(total: _read(f))
-    result[:orders][:nodes] = []
+    result[:warehouses] = {}
+    result[:warehouses].update(total: _read(f), items: [])
 
-    result[:orders][:total].times do |num|
+    result[:warehouses][:total].times do |id|
+      location = _read_a(f)
+      products = _read_a(f)
+      availiable_items = []
+
+      products.each_with_index do |amount, type|
+        availiable_items << [Product.new(type, product_weights[type])] * amount
+      end
+
+      result[:warehouses][:items] << Warehouse.new(id, location, availiable_items)
+    end
+
+    result[:orders] = {}
+    result[:orders].update(total: _read(f), items: [])
+
+    result[:orders][:total].times do |type|
       location = _read_a(f)
       items = _read(f)
       products = _read_a(f)
+      items = []
 
-      result[:orders][:nodes] << { num => { location: location, items: items, products: products } }
+      products.each_with_index do |amount, type|
+        items << [Product.new(type, product_weights[type])] * amount
+      end
+
+      result[:orders][:items] << Order.new(type, location, items)
     end
 
-
   end
-
-  puts result
 end
 
-main(result)
-puts Drone.new
+main
