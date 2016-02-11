@@ -1,4 +1,4 @@
-require './helper'
+require_relative 'helper'
 
 class Warehouse
   attr_accessor :id, :location, :items
@@ -10,4 +10,3 @@ class Warehouse
   end
 
 end
-

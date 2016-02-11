@@ -1,4 +1,4 @@
-require './helper'
+require_relative 'helper'
 
 class Order
   attr_accessor :id, :location, :items

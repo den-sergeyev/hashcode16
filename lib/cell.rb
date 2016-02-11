@@ -1,4 +1,4 @@
-require './helper'
+require_relative 'helper'
 
 class Cell
   attr_accessor :x, :y

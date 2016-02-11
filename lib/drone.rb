@@ -1,4 +1,4 @@
-require './helper'
+require_relative 'helper'
 
 class Drone
   attr_accessor :id, :location, :items
